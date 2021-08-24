@@ -34,6 +34,13 @@ add the external package ourself)
 Note: we cannot easiuly use the open ssh install by GitForWindows because it does NOT ouput cleanly to stdout !
 * If we can get access to the GitHub api... well... we could do a LOT!
 
+## GutHub
+
+* When we do the initial push to the repo, GitHub does NOT create all the Actions from
+the workflow files... it's a bug on their side (touching the .yml files and commit will
+create the Actions). Seems related to the fact that the Tests workflow start running
+immediatly...
+
 ## Documenter
 
 * The links to `stable` and `dev` are always active trough the Badges,

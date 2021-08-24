@@ -28,4 +28,4 @@ jobs:
           JULIA_PKG_SERVER: ""
           # The documentation will be deployed into the package repo.
           # There is no access right to add to this repo.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
