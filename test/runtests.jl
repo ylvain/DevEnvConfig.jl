@@ -4,7 +4,7 @@ using Test
 
 using ..DevEnvConfig: Success, Warning, Error
 
-const gitconf = DevEnvConfig.GitTools.GitConfig("loc_user", "hub_user", "main")
+const gitconf = DevEnvConfig.GitTools.GitConfig("loc_user", "user@foo.com", "hub_user", "main")
 
 @testset "DevEnvConfig" begin
     @test newpkg("Pk1";dir=mktempdir(),testing_gitconfig=gitconf) != Error

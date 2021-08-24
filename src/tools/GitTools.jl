@@ -2,6 +2,7 @@ module GitTools
 
 struct GitConfig
     user_local::String
+    user_email::String
     user_github::String
     def_branch::String
 end
@@ -20,6 +21,14 @@ end
 function user_local()
     try # fail if the option is not defined
         strip(read(`git config user.name`, String))
+    catch
+        nothing
+    end
+end
+
+function user_email()
+    try # fail if the option is not defined
+        strip(read(`git config user.email`, String))
     catch
         nothing
     end
@@ -94,13 +103,22 @@ function checkconfig()
     end
     @info "Git user: $user_loc"
 
+    user_mail = user_email()
+    if isnothing(user_mail)
+        @error "No user email defined. Execute the following command
+        to configure the name of your local git contact email.
+                git config --global user.email name@example.com
+        "
+    end
+    @info "Git email: $user_mail"
+
     branch = defaultbranch()
     if isnothing(branch)
         @error "No default branch name defined. Execute
                 git config --global init.defaultBranch main"
     end
     
-    return GitConfig(user_loc, user_git, branch)
+    return GitConfig(user_loc, user_mail, user_git, branch)
 
 end
 

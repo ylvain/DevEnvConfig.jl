@@ -132,6 +132,12 @@ function create(pkname::String;
         end
     end
 
+    if gitconfif.def_branch != "main"
+        @error "The local Git default branch should be configured to `main`.
+        Execute: git config --global init.defaultBranch main"
+        return Error
+    end
+
     if private && isnothing(docrepo)
         @warn "This package is setup to deploy documentation to its own repo.
         This package is also setup to deploy to a private repo. If you have a
@@ -172,8 +178,8 @@ function create(pkname::String;
                 GitHubActions                # then the status of the CI Tests
             ]),
 
-        Git(; name=nothing,                  # override Git config user.name
-            email=nothing,                   # override Git config user.email
+        Git(; name=gitconfif.user_local,     # override Git config user.name, allows for testing
+            email=gitconfif.user_email,      # override Git config user.email, allows for testing
             branch="main",                   # The desired name of the repository's default branch.
             ssh=true,                        # Whether or not to use SSH for the remote. If left unset, HTTPS is used.
             jl=useextjl,                     # Whether or not to add a .jl suffix to the remote URL.
