@@ -21,9 +21,9 @@ using ..DevEnvConfig: Success, Warning, Error
 
 # DOCUMENTED as `newpkg` in module DevEnvConfig
 function create(pkname::String;
+    private::Bool,
     dir::StrOpt=nothing,
     docrepo::StrOpt=nothing,
-    private=false,
     useextjl::BoolOpt=nothing,
     generalregistry::BoolOpt=nothing,
     license::StrOpt=nothing,

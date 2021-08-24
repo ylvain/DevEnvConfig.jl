@@ -17,9 +17,9 @@ include("pkg/PkgCreate.jl")
 
 """
     function newpkg(pkname::String;
+        private         :: Bool,
         dir             :: String|∅ = nothing,
         docrepo         :: String|∅ = nothing,
-        private         :: Bool     = false,
         useextjl        :: Bool|∅   = nothing,
         generalregistry :: Bool|∅   = nothing,
         license         :: String|∅ = nothing) -> ActionStatus
@@ -35,15 +35,17 @@ Also provides guided setup for code coverage reporting for private repo.
 # Arguments
 
 * `pkname`: the name of the new Julia Package
+* `private`: set to `true` is this package is hosted in a private GitHub repository
 * `dir`: the directory is which to create the package, defaul to `JULIA_PKG_DEVDIR`
 * `docrepo`: the name of a GitHub repo used to publish the documentation, default to the package repo.
-* `private`: set to `true` is this package is hosted in a private GitHub repository
-* `useextjl`: set to `true` if the GitHub repository is named `PackageName.jl`, default to `!private`
+* `useextjl`: set t`o `true` if the GitHub repository is named `PackageName.jl`, default to `!private`
 * `generalregistry`: set to `true` if this package will be registered in General, default to `!private`
 * `license`: name of the LICENSE file, default to `MIT` for public package
 """
 const newpkg = PkgCreate.create
 export newpkg
+
+
 
 
 
