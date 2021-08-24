@@ -1,0 +1,31 @@
+name: Documenter
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+jobs:
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: '1'
+      - run: |
+          julia --project=docs -e '
+            using Pkg
+            Pkg.develop(PackageSpec(path=pwd()))
+            Pkg.instantiate()'
+      - run: |
+          julia --project=docs -e '
+            using Documenter: DocMeta, doctest
+            using DevEnvConfig
+            DocMeta.setdocmeta!(DevEnvConfig, :DocTestSetup, :(using DevEnvConfig); recursive=true)
+            doctest(DevEnvConfig)'
+      - run: julia --project=docs docs/make.jl
+        env:
+          JULIA_PKG_SERVER: ""
+          # The documentation will be deployed into the package repo.
+          # There is no access right to add to this repo.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

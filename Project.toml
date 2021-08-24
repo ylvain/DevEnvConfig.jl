@@ -1,0 +1,7 @@
+name = "DevEnvConfig"
+uuid = "2baef489-5d3b-4196-bdcc-c190e0714a0d"
+authors = ["ylvain <ylvain.dev@ethics-gradient.org> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1.6"
