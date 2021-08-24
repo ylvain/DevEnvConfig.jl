@@ -4,9 +4,11 @@ using Test
 
 using ..DevEnvConfig: Success, Warning, Error
 
+const gitconf = DevEnvConfig.GitTools.GitConfig("loc_user", "hub_user", "main")
+
 @testset "DevEnvConfig" begin
-    @test newpkg("Pk1";dir=mktempdir()) != Error
-    @test newpkg("Pk2";dir=mktempdir(),private=true,docrepo="Docs") != Error
+    @test newpkg("Pk1";dir=mktempdir(),testing_gitconfig=gitconf) != Error
+    @test newpkg("Pk2";dir=mktempdir(),private=true,docrepo="Docs",testing_gitconfig=gitconf) != Error
 end
 
 # Run all doctests in the package. Also run the doctests in docs/src.

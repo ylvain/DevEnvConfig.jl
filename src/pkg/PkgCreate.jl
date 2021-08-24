@@ -68,14 +68,15 @@ function create(pkname::String;
     private=false,
     useextjl::BoolOpt=nothing,
     generalregistry::BoolOpt=nothing,
-    license::StrOpt=nothing)
+    license::StrOpt=nothing,
+    testing_gitconfig=nothing)
 
     # Default: a public repo may be able to register latter, a private repo /cannot/
     generalregistry = something(generalregistry, !private)
     # Default: private repo has NO .jl extension, public repo NEED it to register to General
     useextjl = something(useextjl, !private)
 
-    gitconfif = GitTools.checkconfig()
+    gitconfif = if isnothing(testing_gitconfig); GitTools.checkconfig(); else testing_gitconfig end
     tgtdir = something(dir, get(ENV, "JULIA_PKG_DEVDIR", "?"))
     warning = false
 
