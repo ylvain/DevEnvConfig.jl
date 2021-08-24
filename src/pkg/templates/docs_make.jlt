@@ -1,0 +1,62 @@
+using {{{PKG}}}
+using Documenter
+
+DocMeta.setdocmeta!({{{PKG}}}, :DocTestSetup, :(using {{{PKG}}}); recursive=true)
+
+# Note: even if this package is configured to use a GitHub repo name
+# of the form PACKAGE (and *not* PACKAGE.jl), we still define the
+# sitename to be PACKAGE.jl in the template below.
+# Its recommended to keep this convention as this is what users may
+# google for... (likewise for the title of the main README.md)
+
+makedocs(;
+    modules=[{{{PKG}}}],
+    authors="{{{AUTHORS}}}",
+    repo="https://{{{REPO}}}/blob/{commit}{path}#{line}",
+    sitename="{{{PKG}}}.jl",
+    format=Documenter.HTML(;
+        prettyurls=get(ENV, "CI", "false") == "true",
+{{#CANONICAL}}
+        canonical="{{{CANONICAL}}}",
+{{/CANONICAL}}
+        assets={{^HAS_ASSETS}}String{{/HAS_ASSETS}}[{{^HAS_ASSETS}}],{{/HAS_ASSETS}}
+{{#ASSETS}}
+            "assets/{{{.}}}",
+{{/ASSETS}}
+{{#HAS_ASSETS}}
+        ],
+{{/HAS_ASSETS}}
+    ),
+    pages=[
+        "Home" => "index.md",
+    ],
+{{#MAKEDOCS_KWARGS}}
+    {{{first}}}={{{second}}},
+{{/MAKEDOCS_KWARGS}}
+)
+{{#HAS_DEPLOY}}
+
+let 
+    DEPLY_REPO = "{{{DEPLOY_REPO}}}" # we may deploy to another repo
+    EVENT_NAME = get(ENV,"GITHUB_EVENT_NAME", "")
+    if EVENT_NAME == "workflow_dispatch" || EVENT_NAME == "release"
+        EVENT_NAME = "push" # allows deploy on manual invokation
+    end
+    withenv("GITHUB_REPOSITORY" => DEPLY_REPO, "GITHUB_EVENT_NAME" => EVENT_NAME) do
+        deploydocs(;
+            repo="github.com/"*DEPLY_REPO, # default is "github.com/ylvain/Pk1.jl"
+            devurl="dev",         # default, subdir for push without tag
+            forcepush=true,       # default:false, changes will be combined with the previous commit and force pushed, erasing the Git history on the deployment branch.
+        {{#DEPLOY_DIR}}
+            dirname="{{{DEPLOY_DIR}}}",      # undocumented option, deploy doc at `/dirname` instead of `/`
+        {{/DEPLOY_DIR}}
+        {{#BRANCH}}
+            devbranch="{{{BRANCH}}}",     # which branch to access for the doc build and content
+        {{/BRANCH}}
+        {{#DEPLOY_BRC}}
+            branch="{{{DEPLOY_BRC}}}",        # on which branch of the deploy-repo do we commit the generated doc
+        {{/DEPLOY_BRC}}
+        )
+    end
+end
+{{/HAS_DEPLOY}}

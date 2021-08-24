@@ -1,4 +1,4 @@
-name: Register to public registry
+name: PublicRegister
 on:
   workflow_dispatch:
     inputs:
