@@ -12,4 +12,4 @@
 
 ## Early release for registration. Do not use.
 
-Currently only provides a *very* customized package creation tool, specializing [PkgTemplate](https://invenia.github.io/PkgTemplates.jl/stable/)
+Currently only provides a *very* customized package creation tool, specializing [PkgTemplate](https://invenia.github.io/PkgTemplates.jl/stable/). The main feature is that it handles private package repo, with doc deployment in central public repo. Also provides guided setup for code coverage reporting for private repo.

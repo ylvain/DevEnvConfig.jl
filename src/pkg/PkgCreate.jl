@@ -15,48 +15,6 @@ function template(filename::String)
     joinpath(devEnvConfig_src_path(), "pkg", "templates", filename)
 end
 
-# REQUIRED to register in the public General registry
-# - The URL repo MUST end with ".jl"
-# - All dependencies in Project.toml MUST have an upper-bounded [compat] entry
-#   ==> The CompatHelper workflow ensure that. Should be blocking check before
-# - There MUST be a LICENSE file in the toplevel package, it must be OSI approved
-# - Follow the package naming guiline: https://julialang.github.io/Pkg.jl/dev/creating-packages/#Package-naming-guidelines-1
-# - The public package may be hosted/cloned on others julia servers, the doc will be build by docs/make.jl
-#   ==> The doc should be setup to deploy locally
-
-# -----------------------------------------------------------------------------
-# Using Registrator.jl to register in the General registry
-# https://juliaregistries.github.io/Registrator.jl/stable/webui/#Usage-(For-Package-Maintainers)-1
-# Go the registry Bot page: https://github.com/JuliaRegistries/Registrator.jl
-# Click the Install app: https://github.com/apps/juliateam-registrator/installations/new/permissions?target_id=77893098
-# This install the bot to All or Selected repo
-# The manual procedure is then:
-#   0 Run CompatHelper to check [compact]
-#   1 Set the Project.toml version to version that must be registered
-#     Do NOT create a Tag/Release yet for the commit of the version to be registered (may fail)
-#   2 Comment `@JuliaRegistrator register` on the commit/branch you want to register
-#   3 If something is incorrect, adjust, and redo
-#   4 The bot will comment giving the git command to add a version Tag to commit being registered, e.g.
-#     - git tag -a v0.1.0 -m "<description of version>" e7f59bec82a47801360f80caa1bf3c5ff058c157
-#     - git push v0.1.0
-#   5 If the registration is merged, then execute the git commands to tag it
-#
-# 
-#   TagBot:                  [4+5] used to perform the tagging/release after successful registration
-#   julia-actions/Register:  [1+2] simply bump the version and add the `@JuliaRegistrator register` to the commit 
-
-
-# -----------------------------------------------------------------------------
-
-# julia> using JlConfigurator
-# [ Info: Precompiling JlConfigurator [62c3a89c-45a8-4775-bd98-731bd8e89040]
-# WARNING: Method definition make_test_project(AbstractString) in module PkgTemplates at C:\Users\Yoann\.julia\packages\PkgTemplates\hTyXB\src\plugins\tests.jl:46 overwritten in module PkgCreate at C:\Sources\julia\JlConfigurator\src\pkg\customize.jl:144.       
-#   ** incremental compilation may be fatally broken for this module **
-# WARNING: Method definition badges(PkgTemplates.GitHubActions) in module PkgTemplates at C:\Users\Yoann\.julia\packages\PkgTemplates\hTyXB\src\plugins\ci.jl:63 overwritten in module PkgCreate at C:\Sources\julia\JlConfigurator\src\pkg\customize.jl:169.
-#   ** incremental compilation may be fatally broken for this module **
-# WARNING: Method definition badges(PkgTemplates.Codecov) in module PkgTemplates at C:\Users\Yoann\.julia\packages\PkgTemplates\hTyXB\src\plugins\coverage.jl:19 overwritten in module PkgCreate at C:\Sources\julia\JlConfigurator\src\pkg\customize.jl:178.
-#   ** incremental compilation may be fatally broken for this module **
-
 include("customize.jl")
 using ..GitTools
 using ..DevEnvConfig: Success, Warning, Error

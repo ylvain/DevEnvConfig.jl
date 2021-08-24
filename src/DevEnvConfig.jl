@@ -29,6 +29,9 @@ Create a new package. This will use your GitHub account to:
 * setup unit testing and badge status,
 * setup code coverage on CodeCov and badge statu
 
+This template handles private package repo, with doc deployment in another (public) repo.
+Also provides guided setup for code coverage reporting for private repo.
+
 # Arguments
 
 * `pkname`: the name of the new Julia Package

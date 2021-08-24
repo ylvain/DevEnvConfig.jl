@@ -1,11 +1,12 @@
 
-## General
+# General
+
 * Use Preferences.jl to manage settings/default for this pkg
     * See: https://github.com/JuliaPackaging/Preferences.jl
     * Note: add a .gitignore for LocalPreferences.toml
 * (?) we *could* use Artifact for templates data etc... but it seems overkill
 
-## Pkg Creation
+# Pkg Creation
 
 * take a set of packages (i.e. an initial env) and add them to the project
   (if public registry, also add the [compat] entry so the initial registration succeed)
@@ -19,7 +20,7 @@ add the external package ourself)
 Note: we cannot easiuly use the open ssh install by GitForWindows because it does NOT ouput cleanly to stdout !
 * If we can get access to the GitHub api... well... we could do a LOT!
 
-## Some old notes that were in the README.md template
+# Some old notes that were in the README.md template
 
 ```
 Some note to clean-up
@@ -35,7 +36,7 @@ Some note to clean-up
 * If deploy doc to SAME repo, but as section telling how to enable GitPages on gh-pages (only after first run of documentation otherwise the bransh gh-pages is not yet created)
 ```
 
-## SSH - cannot do the easy way like GitTools on Windows
+# SSH - cannot do the easy way like GitTools on Windows
 
 * Using the execute function in GitTools we have
 ```julia
@@ -52,14 +53,46 @@ $ ssh -T git@github.com
 Hi ylvain! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
-## GutHub
+# GutHub
 
 * When we do the initial push to the repo, GitHub does NOT create all the Actions from
 the workflow files... it's a bug on their side (touching the .yml files and commit will
 create the Actions). Seems related to the fact that the Tests workflow start running
 immediatly...
 
-## Documenter
+# General Registry
+
+REQUIRED to register in the public General registry
+- The URL repo MUST end with ".jl"
+- All dependencies in Project.toml MUST have an upper-bounded [compat] entry
+  ==> The CompatHelper workflow ensure that. Should be blocking check before
+- There MUST be a LICENSE file in the toplevel package, it must be OSI approved
+- Follow the package naming guiline: https://julialang.github.io/Pkg.jl/dev/creating-packages/#Package-naming-guidelines-1
+- The public package may be hosted/cloned on others julia servers, the doc will be build by docs/make.jl
+  ==> The doc should be setup to deploy locally
+
+Using Registrator.jl to register in the General registry
+https://juliaregistries.github.io/Registrator.jl/stable/webui/#Usage-(For-Package-Maintainers)-1
+Go the registry Bot page: https://github.com/JuliaRegistries/Registrator.jl
+Click the Install app: https://github.com/apps/juliateam-registrator/installations/new/permissions?target_id=77893098
+This install the bot to All or Selected repo
+The manual procedure is then:
+  0 Run CompatHelper to check [compact]
+  1 Set the Project.toml version to version that must be registered
+    Do NOT create a Tag/Release yet for the commit of the version to be registered (may fail)
+  2 Comment `@JuliaRegistrator register` on the commit/branch you want to register
+  3 If something is incorrect, adjust, and redo
+  4 The bot will comment giving the git command to add a version Tag to commit being registered, e.g.
+    - git tag -a v0.1.0 -m "<description of version>" e7f59bec82a47801360f80caa1bf3c5ff058c157
+    - git push v0.1.0
+  5 If the registration is merged, then execute the git commands to tag it
+
+
+  TagBot:                  [4+5] used to perform the tagging/release after successful registration
+  julia-actions/Register:  [1+2] simply bump the version and add the `@JuliaRegistrator register` to the commit 
+
+
+# Documenter
 
 * The links to `stable` and `dev` are always active trough the Badges,
 il would be nice to push a page saying that the doc is not yet generated
@@ -80,6 +113,6 @@ and what action will generate it. Now it 404.
     then simply output a link to the index.html file. For a VsCode terminal
     one can directly click on it... (or `run` it under windows to open it in brower)
 
-## SysIaage
+# SysImage
 
 * TODO
