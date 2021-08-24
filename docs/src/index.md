@@ -12,16 +12,17 @@ Documentation for [DevEnvConfig](https://github.com/ylvain/DevEnvConfig.jl).
 ```@index
 ```
 
-## Usage example
+## Early release for registration. Do not use.
 
-You can use the `add` function of this package like so,
+## Conventions
 
-```jldoctest
-julia> add(1,1)
-2
+We use `TypeName|∅` to denote the type `Union{TypeName, Nothing}`
+```julia
+const ∅ = Nothing
+Base.:|(::Type{A},::Type{B}) where {A,B} = Union{A,B}
 ```
 
-## Default API
+## Exported API
 
 ```@autodocs
 Modules = [DevEnvConfig]

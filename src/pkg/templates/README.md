@@ -8,9 +8,10 @@ google for... (likewise for the sitename of the documentation)
 
 # {{{PKG}}}.jl - *A Julia Package for something cool*
 
-{{#BADGES}}
-{{{.}}}
-{{/BADGES}}
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)]({{{DOC_URL}}}/stable)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)]({{{DOC_URL}}}/dev)
+[![Tests](https://github.com/{{{USER}}}/{{{PKG_REPO}}}/workflows/Tests/badge.svg)](https://github.com/{{{USER}}}/{{{PKG_REPO}}}/actions)
+[![Coverage](https://codecov.io/gh/{{{USER}}}/{{{PKG_REPO}}}/branch/main/graph/badge.svg{{{BADGE_TOKEN}}})](https://codecov.io/gh/{{{USER}}}/{{{PKG_REPO}}})
 
 ---
 
@@ -31,20 +32,6 @@ A few things you should do for this project...
 !!! Note that this package has been setup to upstream to a GitHub public repo.
 If this repo is actually private, you should probably regenerate the package!
 {{/PRIVATE_REPO}}
-
-<!-- 
-Some note to clean-up
-* The Badge Doc:Stable will link to 404 until you have published at last one release (right column)
-* The Badge Doc:Dev link to 404 until you have run it MANUALLY 
-    * Todo add comments in Documenter.yml to enable on main commit (but explain that it cost minutes...)
-    * In the doc setup, provite link to e.g. https://github.com/ylvain/Pk2.jl/actions/workflows/Documenter.yml
-    * Run the doc manully to check deployment...
-    * Explain that once deployed, the doc still need to be published by GitHub to the github.io site (wait or go see in the https://github.com/ylvain/PkDoc/deployments if it is publised)
-* The Tests and Coverage run for each commit on `main`, for each pull request to `main` and can also be run manually
-* The documentation has "Edit on GitHub" that links to https://github.com/ylvain/Pk2.jl/blob/master/docs/src/index.md#. master is not the correct branch... Links works but only because GitHub redirect to main
-* Add some lines of codes in /src and some testset in /runtests, allows to check better doc and coverage
-* If deploy doc to SAME repo, but as section telling how to enable GitPages on gh-pages (only after first run of documentation otherwise the bransh gh-pages is not yet created)
- -->
 
 
 {{#REMOTE_DOC}}

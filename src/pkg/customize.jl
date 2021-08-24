@@ -130,19 +130,23 @@ pages_url_stable(t::Template, pkg::AbstractString) = pages_url_base(t, pkg) * "/
 pages_url_dev(t::Template, pkg::AbstractString)    = pages_url_base(t, pkg) * "/dev"
 
 # ==================================================================================
-#                PkgTemplates  (patch Tests plugin)
+#                Extends sub-environments
 # ==================================================================================
 
 const DEP_DOCUMENTER = PackageSpec(;name="Documenter", uuid="e30172f5-a6a5-5a46-863b-614d45cd2de4")
 const DEP_TEST       = PackageSpec(;name="Test"      , uuid="8dfed614-e22c-5e08-85e1-65c5234f0b40")
 
-# Code in PkgTemplates v0.7.18 \src\plugins\tests.jl
-# function make_test_project(pkg_dir::AbstractString)
-#     with_project(() -> Pkg.add(TEST_DEP), joinpath(pkg_dir, "test"))
-# end
-function PkgTemplates.make_test_project(pkg_dir::AbstractString)
+# We cannot extends the way PkgTemplates generates the Test environment without
+# creating another full Plugin (that would delete most of the work to the existing
+# one). See: PkgTemplates \src\plugins\tests.jl.
+# We also avoid to overload "make_test_project" in the above file.
+# So we simply add our changes after package creation.
+#
+# NOTE: pkgconfig_env_test ==> need to commit these
+
+function pkgconfig_env_test(pkg_dir::String) 
     PkgTemplates.with_project(joinpath(pkg_dir, "test")) do 
-        Pkg.add(DEP_TEST)
+        # Pkg.add(DEP_TEST) (done by PkgTemples)
         Pkg.add(DEP_DOCUMENTER)
     end
 end
@@ -163,33 +167,32 @@ PkgTemplates.view(::GitPagesDoc, t::Template, pkg::AbstractString) = Dict(
 
 PkgTemplates.make_canonical(::Type{GitPagesDoc}) = pages_url_stable
 
+#
+#  This was giving `WARNING: Method definition badges(PkgTemplates.GitHubActions)`
+#  during precompilation. So we simply handle the Badge ouself in the README plugin.
+#
 # Type piracy. All URL generated are of form github.com/{{{USER}}}/{{{PKG}}}.jl
-# The .jl suffix is always present, event if the Git plugin has jl=false
-function PkgTemplates.badges(::GitHubActions)
-    Badge("Build Status",
-    "https://github.com/{{{USER}}}/{{{PKG_REPO}}}/workflows/Tests/badge.svg",
-    "https://github.com/{{{USER}}}/{{{PKG_REPO}}}/actions")
-end
-
-# Type piracy. All URL generated are of form github.com/{{{USER}}}/{{{PKG}}}.jl
-# The .jl suffix is always present, event if the Git plugin has jl=false.
-# Moreover the branch name 'master' is hardcoded! We correct both here.
-function PkgTemplates.badges(::Codecov)
-    Badge("Coverage",
-    "https://codecov.io/gh/{{{USER}}}/{{{PKG_REPO}}}/branch/main/graph/badge.svg{{{BADGE_TOKEN}}}",
-    "https://codecov.io/gh/{{{USER}}}/{{{PKG_REPO}}}")
-end
-
-function PkgTemplates.badges(::Documenter{GitPagesDoc})
-    [Badge("Stable", "https://img.shields.io/badge/docs-stable-blue.svg", "{{{DOC_URL}}}/stable"),
-     Badge("Dev",    "https://img.shields.io/badge/docs-dev-blue.svg",    "{{{DOC_URL}}}/dev")   ]
-end
+# badges(::GitHubActions : The .jl suffix is always present, event if the Git plugin has jl=false
+# badges(::Codecov) : the branch name 'master' is hardcoded! We correct both here.
+# badges(::Documenter{GitPagesDoc} : need custom doc URL
+# function PkgTemplates.badges(::GitHubActions)
+#     Badge("Build Status",
+#     "https://github.com/{{{USER}}}/{{{PKG_REPO}}}/workflows/Tests/badge.svg",
+#     "https://github.com/{{{USER}}}/{{{PKG_REPO}}}/actions")
+# end
+# function PkgTemplates.badges(::Codecov)
+#     Badge("Coverage",
+#     "https://codecov.io/gh/{{{USER}}}/{{{PKG_REPO}}}/branch/main/graph/badge.svg{{{BADGE_TOKEN}}}",
+#     "https://codecov.io/gh/{{{USER}}}/{{{PKG_REPO}}}")
+# end
+# function PkgTemplates.badges(::Documenter{GitPagesDoc})
+#     [Badge("Stable", "https://img.shields.io/badge/docs-stable-blue.svg", "{{{DOC_URL}}}/stable"),
+#      Badge("Dev",    "https://img.shields.io/badge/docs-dev-blue.svg",    "{{{DOC_URL}}}/dev")   ]
+# end
 
 function PkgTemplates.user_view(::Documenter{GitPagesDoc}, t::Template, pkg::AbstractString)
     Dict(
         "HAS_DEPLOY" => true,
-        # This view is used to generate the Badge returned by badges(::Documenter{GitPagesDoc})
-        "DOC_URL" => pages_url_base(t, pkg),
         # The repo into which the doc is deployed
         "DEPLOY_REPO" => userrepo_docs(t, pkg),
         # A sub-dir of root into which the doc is deployed (maybe nothing)
@@ -204,23 +207,14 @@ function PkgTemplates.user_view(::Documenter{GitPagesDoc}, t::Template, pkg::Abs
     )
 end
 
-function PkgTemplates.user_view(::Codecov, t::Template, pkg::AbstractString)
-    Dict(
-        "PKG_REPO" => package_reponame(t, pkg),
-        "BADGE_TOKEN" => isprivaterepo(t) ? "?token=SOME_10_CHARS_STRING" : ""
-    )
-end
-
-function PkgTemplates.user_view(::GitHubActions, t::Template, pkg::AbstractString)
-    Dict(
-        "PKG_REPO" => package_reponame(t, pkg)
-    )
-end
-
 function PkgTemplates.user_view(::Readme, t::Template, pkg::AbstractString)
     reponame = package_reponame(t, pkg)
     Dict(
         "TODAY" => today(),
+        "USER"  => t.user,
+        "PKG_REPO" => reponame,
+        "DOC_URL" => pages_url_base(t, pkg),
+        "BADGE_TOKEN" => isprivaterepo(t) ? "?token=SOME_10_CHARS_STRING" : "",
         "REMOTE_DOC_URL" => deploy_samerepo(t, pkg) ? nothing : "https://" * hostuserrepo_docs(t, pkg),
         "REMOTE_DOC" => deploy_samerepo(t, pkg) ? nothing : userrepo_docs(t, pkg),
         "PRIVATE_REPO" => isprivaterepo(t) ? "yes" : nothing,

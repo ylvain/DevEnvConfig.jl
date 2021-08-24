@@ -60,9 +60,10 @@ end
 include("customize.jl")
 using ..GitTools
 
+# DOCUMENTED as `newpkg` in module DevEnvConfig
 function create(pkname::String;
     dir::StrOpt=nothing,
-    docrepo=nothing,
+    docrepo::StrOpt=nothing,
     private=false,
     useextjl::BoolOpt=nothing,
     generalregistry::BoolOpt=nothing,
@@ -265,9 +266,12 @@ function create(pkname::String;
 
     pkgconfig(pkname)
 
+    pkgconfig_env_test(pkpath)
+    GitTools.commit(pkpath, "DevEnvConfig newpkg() extensions")
+
     @info "The package code repo is: $(hostuserrepo_code(pkgconfig, pkname))"
     @info "The package docs repo is: $(hostuserrepo_docs(pkgconfig, pkname))"
-
+    @info "The local package is at $pkpath"
 end
 
 end # module PkgCreate

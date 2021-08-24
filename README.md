@@ -9,4 +9,6 @@
  [![Coverage](https://codecov.io/gh/ylvain/DevEnvConfig.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/ylvain/DevEnvConfig.jl)
 -->
 
+## Early release for registration. Do not use.
 
+Currently only provides a *very* customized package creation tool, specializing [PkgTemplate](https://invenia.github.io/PkgTemplates.jl/stable/)

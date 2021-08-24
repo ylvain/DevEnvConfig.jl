@@ -1,19 +1,4 @@
 
-Find a way to remove type piracy... we'll need to handle badge ourself...
-
-```
-julia> using DevEnvConfig
-[ Info: Precompiling DevEnvConfig [2baef489-5d3b-4196-bdcc-c190e0714a0d]
-WARNING: Method definition make_test_project(AbstractString) in module PkgTemplates at C:\Users\Yoann\.julia\packages\PkgTemplates\hTyXB\src\plugins\tests.jl:46 overwritten in module PkgCreate at c:\Sources\julia\DevEnvConfig\src\pkg\customize.jl:143.
-  ** incremental compilation may be fatally broken for this module **
-
-WARNING: Method definition badges(PkgTemplates.GitHubActions) in module PkgTemplates at C:\Users\Yoann\.julia\packages\PkgTemplates\hTyXB\src\plugins\ci.jl:63 overwritten in module PkgCreate at c:\Sources\julia\DevEnvConfig\src\pkg\customize.jl:168.
-  ** incremental compilation may be fatally broken for this module **
-
-WARNING: Method definition badges(PkgTemplates.Codecov) in module PkgTemplates at C:\Users\Yoann\.julia\packages\PkgTemplates\hTyXB\src\plugins\coverage.jl:19 overwritten in module PkgCreate at c:\Sources\julia\DevEnvConfig\src\pkg\customize.jl:177.
-  ** incremental compilation may be fatally broken for this module **
-```
-
 ## General
 * Use Preferences.jl to manage settings/default for this pkg
     * See: https://github.com/JuliaPackaging/Preferences.jl
@@ -34,6 +19,38 @@ add the external package ourself)
 Note: we cannot easiuly use the open ssh install by GitForWindows because it does NOT ouput cleanly to stdout !
 * If we can get access to the GitHub api... well... we could do a LOT!
 
+Some old notes that were in the README.md template
+```
+Some note to clean-up
+* The Badge Doc:Stable will link to 404 until you have published at last one release (right column)
+* The Badge Doc:Dev link to 404 until you have run it MANUALLY 
+    * Todo add comments in Documenter.yml to enable on main commit (but explain that it cost minutes...)
+    * In the doc setup, provite link to e.g. https://github.com/ylvain/Pk2.jl/actions/workflows/Documenter.yml
+    * Run the doc manully to check deployment...
+    * Explain that once deployed, the doc still need to be published by GitHub to the github.io site (wait or go see in the https://github.com/ylvain/PkDoc/deployments if it is publised)
+* The Tests and Coverage run for each commit on `main`, for each pull request to `main` and can also be run manually
+* The documentation has "Edit on GitHub" that links to https://github.com/ylvain/Pk2.jl/blob/master/docs/src/index.md#. master is not the correct branch... Links works but only because GitHub redirect to main
+* Add some lines of codes in /src and some testset in /runtests, allows to check better doc and coverage
+* If deploy doc to SAME repo, but as section telling how to enable GitPages on gh-pages (only after first run of documentation otherwise the bransh gh-pages is not yet created)
+```
+
+## SSH - cannot do the easy way like GitTools on Windows
+
+* Using the execute function in GitTools we have
+```julia
+ulia> execute(`ssh -V`)
+←[0m←[0m(stdout = "", stderr = "OpenSSH_8.5p1, OpenSSL 1.1.1k  25 Mar 2021\n", code = 0)
+julia> execute(`ssh -T git@github.com`)
+←[0m←[0m(stdout = "", stderr = "", code = 1)
+julia>
+```
+* But the last command do actually ouput !
+```bash
+Yoann@IronSunrise MINGW64 /c/Sources/julia/tmp/Pk2 (main)
+$ ssh -T git@github.com
+Hi ylvain! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
 ## GutHub
 
 * When we do the initial push to the repo, GitHub does NOT create all the Actions from
@@ -50,6 +67,17 @@ and what action will generate it. Now it 404.
 * add a kind static-site pregen (use Mustache.jl like PkgTemplate), purpose
     * allows to cross links between packages doc using [mylink]({{OtherPkg}}base-permalink)
     * probably a lot of others usefull things
+* documente the workflow to generate/test the doc locally efficiently
+    ```
+    $ cd dir-of-the-package
+    $ jl --project=.               [important: jl is the alias that use Revise, needed for docstrings update]
+    julia> include("docs/makejl")
+    ```
+    * Keep the julia session open, re-run `include("docs/makejl")` to re-generate
+    * open the local doc from "docs/build/index.html"
+    * TODO: doing local generate, we will not deploy. Need to detect this.
+    then simply output a link to the index.html file. For a VsCode terminal
+    one can directly click on it... (or `run` it under windows to open it in brower)
 
 ## SysIaage
 
