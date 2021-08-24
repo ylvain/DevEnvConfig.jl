@@ -1,5 +1,12 @@
 module DevEnvConfig
 
+"""
+    @enum ActionStatus Success Warning Error
+
+Return type of configuration actions
+"""
+@enum ActionStatus Success Warning Error
+
 # The path the "src" directory of the package
 function devEnvConfig_src_path()
     dirname(pathof(DevEnvConfig))
@@ -15,7 +22,7 @@ include("pkg/PkgCreate.jl")
         private         :: Bool     = false,
         useextjl        :: Bool|∅   = nothing,
         generalregistry :: Bool|∅   = nothing,
-        license         :: String|∅ = nothing)
+        license         :: String|∅ = nothing) -> ActionStatus
 
 Create a new package. This will use your GitHub account to:
 * setup documentation generation and deployment,
@@ -25,11 +32,11 @@ Create a new package. This will use your GitHub account to:
 # Arguments
 
 * `pkname`: the name of the new Julia Package
-* `dir`: the directory is which to create the package, defaul to JULIA_PKG_DEVDIR
-* `docrepo`: the name of a GitHub repo used to publish the documentation, default to same repo.
+* `dir`: the directory is which to create the package, defaul to `JULIA_PKG_DEVDIR`
+* `docrepo`: the name of a GitHub repo used to publish the documentation, default to the package repo.
 * `private`: set to `true` is this package is hosted in a private GitHub repository
 * `useextjl`: set to `true` if the GitHub repository is named `PackageName.jl`, default to `!private`
-* `generalregistry`: will this package be registered in General, default to `!private`
+* `generalregistry`: set to `true` if this package will be registered in General, default to `!private`
 * `license`: name of the LICENSE file, default to `MIT` for public package
 """
 const newpkg = PkgCreate.create

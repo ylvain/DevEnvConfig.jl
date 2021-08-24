@@ -2,8 +2,11 @@ using Documenter: DocMeta, doctest
 using DevEnvConfig
 using Test
 
+using ..DevEnvConfig: Success, Warning, Error
+
 @testset "DevEnvConfig" begin
-    # Write your tests here.
+    @test newpkg("Pk1";dir=mktempdir()) != Error
+    @test newpkg("Pk2";dir=mktempdir(),private=true,docrepo="Docs") != Error
 end
 
 # Run all doctests in the package. Also run the doctests in docs/src.

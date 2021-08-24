@@ -59,6 +59,7 @@ end
 
 include("customize.jl")
 using ..GitTools
+using ..DevEnvConfig: Success, Warning, Error
 
 # DOCUMENTED as `newpkg` in module DevEnvConfig
 function create(pkname::String;
@@ -76,26 +77,27 @@ function create(pkname::String;
 
     gitconfif = GitTools.checkconfig()
     tgtdir = something(dir, get(ENV, "JULIA_PKG_DEVDIR", "?"))
+    warning = false
 
     if tgtdir == "?"
         @error "No target directory provided !
         Either define the environment variable JULIA_PKG_DEVDIR,
         or pass the directory with optional argument `dir`."
-        return
+        return Error
     end
 
     try
         tgtdir = realpath(tgtdir)
     catch
         @error "The deployment path '$(tgtdir)' does not exist !"
-        return
+        return Error
     end
 
     pkpath = joinpath(tgtdir, pkname)
     @info "The package $(pkname) will be created at $(pkpath)"
     if ispath(pkpath)
         @error "The path '$(pkpath)' already exist !"
-        return
+        return Error
     end
 
     if generalregistry
@@ -103,17 +105,20 @@ function create(pkname::String;
             @error "Defined to both deploy into a private repo and register to the General registry.
             Only public package can be registred in General.
             Set `generalregistry` to `false` or `nothing` (default)."
+            return Error
         end
     
         if !useextjl
             @error "Package was requested or inferred to be published into the General registry.
             The repo must use the .jl extension. See `generalregistry` and `!useextjl`."
+            return Error
         end
         
         if !isnothing(docrepo)
             @error "Package was requested or inferred to be published into the General registry.
             The documentation should be deployed locally in the package repo,
             leave the `docrepo` argument to its default value of `nothing`"
+            return Error
         end
     
         if isnothing(license)
@@ -122,6 +127,7 @@ function create(pkname::String;
             The license was undefined. Forcing the license to `MIT`.
             An OSI-approved license is required to register the General registry.
             You may choose another OSI-approved license by using the `license` keyword argument."
+            warning = true
         end
     end
 
@@ -133,6 +139,7 @@ function create(pkname::String;
         If you want the repo of the package to be private, then first create
         another public GitHub repo to host the packages documentation and regenerate
         this package to deploy the documentation to the public doc repo."
+        warning = true
     end    
 
     pkgconfig = Template(;
@@ -272,6 +279,7 @@ function create(pkname::String;
     @info "The package code repo is: $(hostuserrepo_code(pkgconfig, pkname))"
     @info "The package docs repo is: $(hostuserrepo_docs(pkgconfig, pkname))"
     @info "The local package is at $pkpath"
+    return warning ? Warning : Success
 end
 
 end # module PkgCreate

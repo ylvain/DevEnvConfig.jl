@@ -19,7 +19,8 @@ add the external package ourself)
 Note: we cannot easiuly use the open ssh install by GitForWindows because it does NOT ouput cleanly to stdout !
 * If we can get access to the GitHub api... well... we could do a LOT!
 
-Some old notes that were in the README.md template
+## Some old notes that were in the README.md template
+
 ```
 Some note to clean-up
 * The Badge Doc:Stable will link to 404 until you have published at last one release (right column)

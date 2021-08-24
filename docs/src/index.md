@@ -7,7 +7,7 @@ end
 
 # DevEnvConfig
 
-Documentation for [DevEnvConfig](https://github.com/ylvain/DevEnvConfig.jl).
+Pulic repo of [DevEnvConfig](https://github.com/ylvain/DevEnvConfig.jl).
 
 ```@index
 ```
