@@ -34,7 +34,7 @@ function create(pkname::String;
     # Default: private repo has NO .jl extension, public repo NEED it to register to General
     useextjl = something(useextjl, !private)
 
-    gitconfif = if isnothing(testing_gitconfig); GitTools.checkconfig(); else testing_gitconfig end
+    gitconfif = if isnothing(testing_gitconfig); GitTools.getconfig(); else testing_gitconfig end
     tgtdir = something(dir, get(ENV, "JULIA_PKG_DEVDIR", "?"))
     warning = false
 

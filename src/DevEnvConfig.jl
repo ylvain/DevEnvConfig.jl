@@ -12,6 +12,7 @@ function devEnvConfig_src_path()
     dirname(pathof(DevEnvConfig))
 end
 
+include("tools/CmdTools.jl")
 include("tools/GitTools.jl")
 include("pkg/PkgCreate.jl")
 
