@@ -11,9 +11,15 @@ Return type of configuration actions
 function devEnvConfig_src_path()
     dirname(pathof(DevEnvConfig))
 end
+function devEnvConfig_pkg_path()
+    dirname(devEnvConfig_src_path())
+end
 
+include("tools/RuntimeEnv.jl")
+include("tools/RuntimeContext.jl")
 include("tools/CmdTools.jl")
 include("tools/GitTools.jl")
+include("sysimages/SysImageBuilder.jl")
 include("pkg/PkgCreate.jl")
 
 """
@@ -45,9 +51,5 @@ Also provides guided setup for code coverage reporting for private repo.
 """
 const newpkg = PkgCreate.create
 export newpkg
-
-
-
-
 
 end # module DevEnvConfig
